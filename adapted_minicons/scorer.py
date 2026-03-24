@@ -594,7 +594,7 @@ class MaskedLMScorer(LMScorer):
                 # ranks = shape[1] - inv_ranks + 1
                 ranks = (-1.0 * sent_log_probs).argsort().argsort() + 1
                 word_ranks = ranks[torch.arange(shape[0]), effective_token_ids].split(lengths)
-            sent_log_probs = sent_log_probs[torch.arange(sum(lengths)), effective_token_ids].type(torch.DoubleTensor).split(lengths)
+            sent_log_probs = sent_log_probs[torch.arange(sum(lengths)), effective_token_ids].type(torch.FloatTensor).split(lengths)
             # print(sent_log_probs)
             # sentence_scores = list(map(lambda x: x.sum().tolist(), logprobs))
             # outputs.append((logprobs, sent_tokens))
@@ -655,7 +655,7 @@ class MaskedLMScorer(LMScorer):
             word_ranks = word_ranks[torch.arange(shape[0]), effective_token_ids].split(lengths)
             word_ranks = [wr.tolist() for wr in word_ranks]
 
-        scores = logprob_distribution[torch.arange(sum(lengths)), effective_token_ids].type(torch.DoubleTensor).split(lengths)
+        scores = logprob_distribution[torch.arange(sum(lengths)), effective_token_ids].type(torch.FloatTensor).split(lengths)
         scores = [s for s in scores]
 
         if not return_tensors:
@@ -1104,7 +1104,7 @@ class IncrementalLMScorer(LMScorer):
             # log_prob.shape = [seq_len + 1]
             sent_log_probs = sent_ids_scores - sent_logits.logsumexp(1)
             
-            sent_log_probs = sent_log_probs.type(torch.DoubleTensor)
+            sent_log_probs = sent_log_probs.type(torch.FloatTensor)
             sent_log_probs = sent_log_probs[offsets[sent_index]:]
             lengths = len(sent_log_probs)
             if rank:
@@ -1503,7 +1503,7 @@ class Seq2SeqScorer(LMScorer):
             # log_prob.shape = [seq_len + 1]
             sent_log_probs = sent_ids_scores - sent_logits.logsumexp(1)
             
-            sent_log_probs = sent_log_probs.type(torch.DoubleTensor)
+            sent_log_probs = sent_log_probs.type(torch.FloatTensor)
             sent_log_probs = sent_log_probs[offsets[sent_index]:]
             lengths = len(sent_log_probs)
             if rank:
